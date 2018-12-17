@@ -12,12 +12,25 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: 'findbugs'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'pl.malinowski'
-version = '0.0.1-SNAPSHOT'
+
+def getVersionName = { ->
+    def cmd = "git describe --always --long --dirty"
+    def proc = cmd.execute()
+    project.ext.gitRevision = proc.text.trim()
+    version = project.ext.gitRevision
+}
+
+getVersionName()
+
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
@@ -29,5 +42,81 @@ dependencies {
 	runtimeOnly('mysql:mysql-connector-java')
 	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+	
+	compile 'mysql:mysql-connector-java:8.0.13'
+    compile 'org.liquibase:liquibase-core'
+    compile 'com.h2database:h2:1.4.196'
 }
+
+jar {
+    manifest {
+        attributes  (
+         'Implementation-Version': version,
+                'Main-Class': mainClass
+        )
+    }
+}
+
+bootRun {
+    systemProperties System.properties
+}
+
+checkstyle {
+    toolVersion '8.10.1'
+    configFile file("src/main/resources/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+    checkstyleTest.enabled = false
+    checkstyleMain.enabled = true
+}
+
+checkstyleMain {
+    source ='src'
+}
+
+jacoco {
+    toolVersion = "0.8.1"
+    reportsDir = file("$buildDir/jacoco")
+}
+
+test {
+    useJUnit {
+        includeCategories 'pl.malinowski.cpuinfo.UnitTests'
+        includeCategories 'pl.malinowski.cpuinfo.RestTests'
+    }
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        csv.enabled = true
+        html.enabled = true
+        html.destination = file("$buildDir/jacoco/jacoco.html")
+        xml.destination = file("$buildDir/jacoco/jacoco.xml")
+        csv.destination = file("$buildDir/jacoco/jacoco.csv")
+    }
+}
+
+tasks.test.finalizedBy(jacocoTestReport)
+
+findbugs {
+    ignoreFailures = true
+    toolVersion = "3.0.1"
+    sourceSets=[sourceSets.main]
+    reportsDir = file("$project.buildDir/findbugs")
+    effort = "max"
+    reportLevel = "low"
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+

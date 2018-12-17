@@ -12,6 +12,8 @@ spring:
     jpa:
       repositories:
         enabled: true
+  liquibase:
+    change-log: classpath:changelog/changelog.xml
   jpa:
     hibernate:
       ddl-auto: none

@@ -1,25 +1,29 @@
 package pl.malinowski.cpuinfo.services.impl;
 
 import org.springframework.stereotype.Service;
-import pl.malinowski.cpuinfo.db.CpuInfoRepository;
-import pl.malinowski.cpuinfo.dto.CpuInfoDto;
+import org.springframework.transaction.annotation.Transactional;
+import pl.malinowski.cpuinfo.db.ProcessRepository;
+import pl.malinowski.cpuinfo.db.entity.ProcessEntity;
+import pl.malinowski.cpuinfo.dto.ProcessDto;
 import pl.malinowski.cpuinfo.services.CpuCommand;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
 class CpuService implements CpuCommand {
 
-    private final CpuInfoRepository cpuInfoRepository;
+    private final ProcessRepository processRepository;
     private final CpuInfoMapper cpuInfoMapper;
 
-    CpuService(final CpuInfoRepository cpuInfoRepository) {
-        this.cpuInfoRepository = cpuInfoRepository;
+    CpuService(final ProcessRepository processRepository) {
+        this.processRepository = processRepository;
         this.cpuInfoMapper = new CpuInfoMapper();
     }
 
     @Override
-    public void save(final Set<CpuInfoDto> dtoSet) {
-        cpuInfoRepository.saveAll(cpuInfoMapper.mapToEntity(dtoSet));
+    @Transactional
+    public List<ProcessEntity> save(final Set<ProcessDto> dtoSet) {
+        return processRepository.saveAll(cpuInfoMapper.mapToEntity(dtoSet));
     }
 }
