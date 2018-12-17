@@ -40,17 +40,18 @@ public class CpuServiceTest {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void save_thereAreNullFields_exception() {
-        final ProcessDto processDto = new ProcessDto();
+        final ProcessDto processDto = ProcessDto.builder().build();
         cpuCommand.save(Collections.singleton(processDto));
     }
 
     @Test
     public void save_properDtoToSave_saved() {
-        final ProcessDto processDto = new ProcessDto()
-            .setName("name2")
-            .setCpu(123.0)
-            .setMemory(123456789.0)
-            .setCreated(123456L);
+        final ProcessDto processDto = ProcessDto.builder()
+            .name("name2")
+            .cpu(123.0)
+            .memory(123456789.0)
+            .created(123456L)
+            .build();
         cpuCommand.save(Collections.singleton(processDto));
         final List<ProcessEntity> entities = processRepository.findAll();
 

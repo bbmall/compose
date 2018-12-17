@@ -31,4 +31,29 @@
                        constraintName="id_process"
                        tableName="process"/>
     </changeSet>
+
+    <changeSet id="20181217-1330" author="bartosz.malinowski">
+        <sql>
+            set global log_bin_trust_function_creators=1;
+        </sql>
+        <createProcedure>
+            CREATE FUNCTION str_to_uuid(_str CHAR(36))
+            RETURNS BINARY(16)
+            LANGUAGE SQL  DETERMINISTIC  CONTAINS SQL  SQL SECURITY INVOKER
+            RETURN
+            IF(_str IS NULL, NULL, UNHEX(REPLACE(_str, '-', '')));
+        </createProcedure>
+        <createProcedure>
+            CREATE FUNCTION uuid_to_str(_uuid BINARY(16))
+            RETURNS CHAR(36)
+            LANGUAGE SQL  DETERMINISTIC  CONTAINS SQL  SQL SECURITY INVOKER
+            RETURN
+            IF(_uuid IS NULL, NULL, LCASE(CONCAT_WS('-',
+            HEX(SUBSTR(_uuid, 1, 4)),
+            HEX(SUBSTR(_uuid, 5, 2)),
+            HEX(SUBSTR(_uuid, 7, 2)),
+            HEX(SUBSTR(_uuid, 9, 2)),
+            HEX(SUBSTR(_uuid, 11)) )));
+        </createProcedure>
+    </changeSet>
 </databaseChangeLog>

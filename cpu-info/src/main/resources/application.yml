@@ -6,8 +6,8 @@ spring:
   datasource:
     platform: mysql
     url: jdbc:mysql://localhost:3335/cpu_info
-    username: cpu
-    password: cpu
+    username: root
+    password: root
   data:
     jpa:
       repositories:

@@ -12,11 +12,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @Category(UnitTests.class)
-public class LinuxCpuHarvesterTest {
+public class MockCpuHarvesterTest {
 
     @Test
     public void collectData_queryData_shouldNotBeNull() {
-        final CpuHarvester cpuHarvester = new LinuxCpuHarvester();
+        final CpuHarvester cpuHarvester = new MockCpuHarvester();
         final Set<ProcessDto> processDtos = cpuHarvester.collectData();
 
         assertEquals(15, processDtos.size());
@@ -27,9 +27,5 @@ public class LinuxCpuHarvesterTest {
             .filter(p -> p.getCreated() == null)
             .findAny()
             .ifPresent(p -> fail());
-
-        //dodać lomboka do DTO
-//        to samo z DTO oraz
-        fail();
     }
 }
