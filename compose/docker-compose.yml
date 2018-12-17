@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "3335:3306"
+    environment:
+      - MYSQL_DATABASE=cpu_info
+      - MYSQL_USER=cpu
+      - MYSQL_PASSWORD=cpu
+      - MYSQL_ROOT_PASSWORD=root
+      
+volumes:
+  mysqldata:
