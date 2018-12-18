@@ -12,15 +12,14 @@ services:
       - MYSQL_USER=cpu
       - MYSQL_PASSWORD=cpu
       - MYSQL_ROOT_PASSWORD=root
-
-
+      
   cpu-info:
     image: pl.malinowski/cpu-info:latest
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3335/cpu_info      
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/cpu_info
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      - MANAGER_SCHEDULESECONDS=60      
+      - MANAGER_SCHEDULESECONDS=1
     depends_on:
       - db       
     restart: on-failure   
