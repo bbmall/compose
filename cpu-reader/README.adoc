@@ -1,0 +1,3 @@
+#cpu-reader
+
+Vertx application with rest api to get calculated/aggregated data about cpu processes
