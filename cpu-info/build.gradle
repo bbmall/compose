@@ -7,7 +7,13 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.19.2")
+        classpath("gradle.plugin.com.garyclayburg:dockerPreparePlugin:1.3.1")
 	}
+}
+
+plugins {
+    id "com.garyclayburg.dockerprepare" version "1.3.2"
 }
 
 apply plugin: 'java'
@@ -17,6 +23,8 @@ apply plugin: 'jacoco'
 apply plugin: 'findbugs'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.palantir.docker'
+apply plugin: 'com.garyclayburg.dockerprepare'
 
 group = 'pl.malinowski'
 
@@ -26,6 +34,7 @@ def getVersionName = { ->
     project.ext.gitRevision = proc.text.trim()
     version = project.ext.gitRevision
 }
+
 
 getVersionName()
 
@@ -65,13 +74,9 @@ checkstyle {
     toolVersion '8.10.1'
     configFile file("src/main/resources/checkstyle/checkstyle.xml")
     ignoreFailures = false
-    checkstyleTest.enabled = false
-    checkstyleMain.enabled = true
+    sourceSets = [project.sourceSets.main]
 }
 
-checkstyleMain {
-    source ='src'
-}
 
 jacoco {
     toolVersion = "0.8.1"
@@ -119,4 +124,13 @@ tasks.withType(FindBugs) {
     }
 }
 
+dockerprepare {
+    dockerBuildDirectory "${project.buildDir}/dockerlayers"
+}
 
+docker {
+    name "${project.group}/${jar.baseName}"
+    files "${dockerprepare.dockerBuildDirectory}"
+    dockerfile file("${dockerprepare.dockerBuildDirectory}/Dockerfile")
+    dependsOn  build
+}

@@ -32,7 +32,7 @@
                        tableName="process"/>
     </changeSet>
 
-    <changeSet id="20181217-1330" author="bartosz.malinowski">
+    <changeSet id="20181217-1330" author="bartosz.malinowski" dbms="mysql">
         <sql>
             set global log_bin_trust_function_creators=1;
         </sql>

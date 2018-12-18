@@ -18,3 +18,12 @@ spring:
     hibernate:
       ddl-auto: none
     openInView: false
+
+manager:
+  scheduleSeconds: 6
+
+
+logging:
+  level:
+    root: info
+    pl.malinowski.cpuinfo.db: debug
